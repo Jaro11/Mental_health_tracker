@@ -1,4 +1,4 @@
-<h1>Welcome to the Mental Health Tracker</h1>
+<h1>Welcome to the MindBuddy - Your personal Mental Health Tracker</h1>
 
 <div class="user-info">
   <% if user_signed_in? %>
@@ -25,8 +25,6 @@
       <li>No journal entries found. <%= link_to 'Create one now', new_journal_entry_path %>.</li>
     <% end %>
   </ul>
-<% else %>
-  <p>Please <%= link_to 'login', new_user_session_path %> to view your journal entries.</p>
 <% end %>
 
 <h2>Mental Health Tips</h2>
