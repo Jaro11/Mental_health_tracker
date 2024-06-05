@@ -1,6 +1,0 @@
-<h1>Mental Health Tips</h1>
-<ul>
-  <% @tips.each do |tip| %>
-    <li><%= link_to tip.content.truncate(30), tip_path(tip) %></li>
-  <% end %>
-</ul>
