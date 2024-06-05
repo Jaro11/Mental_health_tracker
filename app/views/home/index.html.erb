@@ -1,0 +1,168 @@
+<h1>Welcome to MindBuddy - Your Personal Mental Health Tracker</h1>
+
+<div class="upcoming-features">
+  <h2>Upcoming Features</h2>
+  <ul>
+    <li>
+      <strong>AI Analysis of Journal Entries:</strong> Our advanced AI analyzes your journal entries to identify patterns and provide insights into your emotional well-being.
+    </li>
+    <li>
+      <strong>AI Psychologist:</strong> Get real-time support and guidance from our AI psychologist, available 24/7 to offer you advice and coping strategies tailored to your needs.
+    </li>
+    <li>
+      <strong>AI Analysis of Facial Expressions and Voice:</strong> MindBuddy uses cutting-edge AI technology to analyze your facial expressions and voice, providing a comprehensive assessment of your mood and mental state.
+    </li>
+  </ul>
+</div>
+
+<div class="user-info">
+  <% if user_signed_in? %>
+    <p>Hello, <%= current_user.email %>!</p>
+    <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'btn btn-primary' %> |
+    <%= link_to 'New Journal Entry', new_journal_entry_path, class: 'btn btn-success' %>
+  <% else %>
+    <p><%= link_to 'Sign up', new_user_registration_path, class: 'btn btn-primary' %> or
+    <%= link_to 'Login', new_user_session_path, class: 'btn btn-primary' %></p>
+  <% end %>
+</div>
+
+<% if user_signed_in? %>
+  <h2>Your Journal Entries</h2>
+  <ul class="journal-entries">
+    <% if current_user.journal_entries.any? %>
+      <% current_user.journal_entries.each do |entry| %>
+        <li>
+          <strong><%= entry.date %>:</strong>
+          <%= link_to entry.content.truncate(50), journal_entry_path(entry) %>
+        </li>
+      <% end %>
+    <% else %>
+      <li>No journal entries found. <%= link_to 'Create one now', new_journal_entry_path %>.</li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Mental Health Tips</h2>
+<ul class="tips">
+  <% @tips.each do |tip| %>
+    <li><%= link_to tip.content, tip_path(tip) %></li>
+  <% end %>
+</ul>
+
+<h2>Interactive Exercises</h2>
+<ul class="exercises">
+  <% @exercises.each do |exercise| %>
+    <li><%= link_to exercise.name, exercise_path(exercise) %></li>
+  <% end %>
+</ul>
+
+<h2>Connect with Professionals</h2>
+<ul class="professionals">
+  <% @professionals.each do |professional| %>
+    <li><%= link_to professional.name, professional_path(professional) %></li>
+  <% end %>
+</ul>
+
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    color: #4A90E2;
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .content {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    color: #4A90E2;
+    border-bottom: 2px solid #4A90E2;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+
+  .user-info {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .journal-entries, .tips, .exercises, .professionals, .upcoming-features ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+
+  .journal-entries li, .tips li, .exercises li, .professionals li, .upcoming-features li {
+    background: #f9f9f9;
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .btn-primary {
+    background: #4A90E2;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #357ABD;
+  }
+
+  .btn-success {
+    background: #34A853;
+    color: white;
+  }
+
+  .btn-success:hover {
+    background: #2C8C43;
+  }
+
+  .upcoming-features {
+    margin-bottom: 40px;
+    padding: 20px;
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 8px;
+  }
+
+  .upcoming-features h2 {
+    color: #0d47a1;
+  }
+
+  .upcoming-features li {
+    margin: 10px 0;
+  }
+
+  .upcoming-features strong {
+    color: #0d47a1;
+  }
+</style>
