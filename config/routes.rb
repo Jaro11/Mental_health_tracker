@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   resources :tips, only: [:index, :show]
   resources :exercises, only: [:index, :show]
   resources :professionals, only: [:index, :show]
+  post 'get-advice', to: 'advice#create'
 end

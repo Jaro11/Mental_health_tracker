@@ -7,32 +7,33 @@
       font-family: 'Arial', sans-serif;
       line-height: 1.6;
       color: #333;
-      background-color: #f4f4f4;
+      background-color: #f0f4f8;
       margin: 0;
       padding: 0;
     }
 
     h1 {
-      color: #4A90E2;
+      color: #003366;
       text-align: center;
       padding: 20px 0;
       margin: 0;
-      background-color: #fff;
+      background-color: #ffffff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-bottom: 4px solid #00509e;
     }
 
     .content {
       max-width: 800px;
       margin: 20px auto;
       padding: 20px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
-      color: #4A90E2;
-      border-bottom: 2px solid #4A90E2;
+      color: #00509e;
+      border-bottom: 2px solid #00509e;
       padding-bottom: 10px;
       margin-bottom: 20px;
     }
@@ -49,11 +50,11 @@
     }
 
     .journal-entries li, .tips li, .exercises li, .professionals li, .upcoming-features li {
-      background: #f9f9f9;
+      background: #eef4fb;
       margin: 10px 0;
       padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      border: 1px solid #c0d6e4;
+      border-radius: 10px;
     }
 
     .btn {
@@ -63,38 +64,38 @@
       cursor: pointer;
       text-decoration: none;
       margin: 5px;
-      border-radius: 5px;
+      border-radius: 8px;
       transition: background-color 0.3s;
     }
 
     .btn-primary {
-      background: #4A90E2;
+      background: #007bbd;
       color: white;
     }
 
     .btn-primary:hover {
-      background: #357ABD;
+      background: #00509e;
     }
 
     .btn-success {
-      background: #34A853;
+      background: #28a745;
       color: white;
     }
 
     .btn-success:hover {
-      background: #2C8C43;
+      background: #218838;
     }
 
     .upcoming-features {
       margin-bottom: 40px;
       padding: 20px;
-      background: #e3f2fd;
-      border: 1px solid #90caf9;
-      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #c0d6e4;
+      border-radius: 15px;
     }
 
     .upcoming-features h2 {
-      color: #0d47a1;
+      color: #00509e;
     }
 
     .upcoming-features li {
@@ -102,13 +103,42 @@
     }
 
     .upcoming-features strong {
-      color: #0d47a1;
+      color: #00509e;
+    }
+
+    .psychologist-section {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .psychologist-section h2 {
+      color: #00509e;
+      margin-bottom: 20px;
+    }
+
+    .psychologist-section form {
+      margin-top: 20px;
+    }
+
+    .psychologist-section textarea {
+      width: 90%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #c0d6e4;
+      font-size: 16px;
+      margin-bottom: 10px;
     }
 
     footer {
       text-align: center;
       padding: 20px;
-      background: #4A90E2;
+      background: #007bbd;
       color: white;
       position: fixed;
       width: 100%;
@@ -120,14 +150,21 @@
   <h1>Welcome to MindBuddy - Your Personal Mental Health Tracker</h1>
 
   <div class="content">
+    <div class="psychologist-section">
+      <h2>AI Psychologist</h2>
+      <p>Get real-time support and guidance from our AI psychologist, available 24/7 to offer you advice and coping strategies tailored to your needs.</p>
+      <form id="advice-form">
+        <textarea id="user-input" placeholder="Describe your situation..." required></textarea><br>
+        <button type="submit" class="btn btn-primary">Get Advice</button>
+      </form>
+      <div id="advice-output" style="margin-top: 20px;"></div>
+    </div>
+
     <div class="upcoming-features">
       <h2>Upcoming Features</h2>
       <ul>
         <li>
           <strong>AI Analysis of Journal Entries:</strong> Our advanced AI analyzes your journal entries to identify patterns and provide insights into your emotional well-being.
-        </li>
-        <li>
-          <strong>AI Psychologist:</strong> Get real-time support and guidance from our AI psychologist, available 24/7 to offer you advice and coping strategies tailored to your needs.
         </li>
         <li>
           <strong>AI Analysis of Facial Expressions and Voice:</strong> MindBuddy uses cutting-edge AI technology to analyze your facial expressions and voice, providing a comprehensive assessment of your mood and mental state.
@@ -189,5 +226,34 @@
   <footer>
     Jaroslav Sidor is the owner of the project
   </footer>
+
+  <script>
+    document.getElementById('advice-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const userInput = document.getElementById('user-input').value;
+
+      try {
+        const response = await fetch('/get-advice', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ message: userInput })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('advice-output').innerText = data.advice;
+        } else {
+          document.getElementById('advice-output').innerText = 'Error: ' + data.error;
+        }
+      } catch (error) {
+        document.getElementById('advice-output').innerText = 'An error occurred: ' + error.message;
+      }
+    });
+  </script>
 </body>
 </html>
