@@ -10,139 +10,51 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 
     <style>
-      body {
-        background-color: #f7f9fc;
-        font-family: 'Open Sans', sans-serif;
-        padding-top: 80px; /* To prevent content from hiding behind the fixed header */
-        padding-bottom: 60px; /* To prevent content from hiding behind the fixed footer */
-      }
-
-      h1, h2 {
-        color: #2c3e50;
-        text-align: center;
-      }
-
       h1 {
-        margin-top: 30px;
-        font-size: 3em;
-      }
-
-      .section-title {
-        color: #2980b9;
-        border-bottom: 2px solid #2980b9;
-        padding-bottom: 10px;
-        margin-bottom: 30px;
-        font-size: 2em;
-        font-weight: bold;
-      }
-
-      .navbar {
-        background-color: #2980b9;
-        color: #fff;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        width: 100%;
-        top: 0;
-        z-index: 1000;
-      }
-
-      .navbar-brand {
-        font-weight: bold;
-        font-size: 1.5em;
-        color: #fff !important;
-      }
-
-      .navbar-light .navbar-nav .nav-link {
-        color: #fff !important;
+        color: #003366;
+        text-align: center;
+        padding: 20px 0;
+        margin: 0;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-bottom: 4px solid #00509e;
       }
 
       .content {
-        background-color: #fff;
+        margin-top: 20px;
+        background: #ffffff;
         border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-bottom: 40px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
-      .list-group-item {
-        border: none;
-        background-color: #ecf0f1;
-        color: #34495e;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        padding: 15px;
-        transition: background-color 0.3s;
-      }
-
-      .list-group-item:hover {
-        background-color: #bdc3c7;
-        cursor: pointer;
-      }
-
-      .btn-primary, .btn-success {
-        background-color: #2980b9;
-        border-color: #2980b9;
-        border-radius: 25px;
-        padding: 10px 20px;
-        font-weight: bold;
-        transition: background-color 0.3s;
-      }
-
-      .btn-primary:hover, .btn-success:hover {
-        background-color: #21618c;
-        border-color: #21618c;
-      }
-
-      .btn-danger {
-        border-radius: 25px;
-        padding: 10px 20px;
-        font-weight: bold;
+      .section-title {
+        color: #00509e;
+        border-bottom: 2px solid #00509e;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
       }
 
       footer {
-        background-color: #2980b9;
-        color: #fff;
-        padding: 20px;
         text-align: center;
-        font-size: 1.2em;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        z-index: 1000;
-      }
-
-      footer p {
-        margin: 0;
-      }
-
-      .alert-info {
-        font-size: 1.1em;
-        color: #2980b9;
-        background-color: #eaf3fa;
-        border-color: #d6e9f8;
-      }
-
-      .section {
-        margin-bottom: 50px;
-      }
-
-      textarea.form-control {
-        border-radius: 15px;
-        border: 1px solid #ced4da;
+        padding: 20px;
+        background: #007bbd;
+        color: white;
+        margin-top: 40px;
       }
     </style>
   </head>
 
   <body>
     <!-- Navigation bar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="#">MindBuddy</a>
     </nav>
 
     <div class="container mt-5">
       <div class="content">
         <!-- AI Psychologist Section -->
-        <div class="section psychologist-section">
+        <div class="psychologist-section">
           <h2 class="section-title">AI Psychologist</h2>
           <p>Get real-time support and guidance from our AI psychologist, available 24/7 to offer you advice and coping strategies tailored to your needs.</p>
           <form id="advice-form" class="mb-4">
@@ -153,7 +65,7 @@
         </div>
 
         <!-- Journal Entries Section -->
-        <div class="section journal-entries-section">
+        <div class="journal-entries-section">
           <h2 class="section-title">Your Journal Entries</h2>
           <% if user_signed_in? %>
             <div class="user-info mb-3">
@@ -173,7 +85,9 @@
                   </li>
                 <% end %>
               </ul>
-              <%= button_to 'Analyze Journal Entries', analyze_journal_entries_path, method: :post, class: 'btn btn-primary' %>
+              <!-- Button to trigger the analysis of journal entries -->
+              <button id="analyze-button" class="btn btn-primary">Analyze Journal Entries</button>
+              <div id="analyze-output" class="alert alert-info mt-3"></div>
             <% else %>
               <p>No journal entries found. <%= link_to 'Create one now', new_journal_entry_path, class: 'btn btn-success' %>.</p>
             <% end %>
@@ -184,7 +98,7 @@
         </div>
 
         <!-- Mental Health Tips Section -->
-        <div class="section tips-section mt-5">
+        <div class="tips-section mt-5">
           <h2 class="section-title">Mental Health Tips</h2>
           <ul class="list-group">
             <% @tips.each do |tip| %>
@@ -194,7 +108,7 @@
         </div>
 
         <!-- Exercises Section -->
-        <div class="section exercises-section mt-5">
+        <div class="exercises-section mt-5">
           <h2 class="section-title">Interactive Exercises</h2>
           <ul class="list-group">
             <% @exercises.each do |exercise| %>
@@ -204,7 +118,7 @@
         </div>
 
         <!-- Professionals Section -->
-        <div class="section professionals-section mt-5">
+        <div class="professionals-section mt-5">
           <h2 class="section-title">Connect with Professionals</h2>
           <ul class="list-group">
             <% @professionals.each do |professional| %>
@@ -214,7 +128,7 @@
         </div>
 
         <!-- Upcoming Features Section -->
-        <div class="section upcoming-features mt-5">
+        <div class="upcoming-features mt-5">
           <h2 class="section-title">Upcoming Features</h2>
           <ul class="list-group">
             <li class="list-group-item">
@@ -229,9 +143,65 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
-      <p>&copy; 2024 MindBuddy | Jaroslav Sidor is the owner of the project</p>
+    <footer class="footer bg-light text-center">
+      <p>&copy; 2024 MindBuddy</p>
     </footer>
 
-    <!-- JavaScript for AI Psychologist -->
+    <!-- JavaScript for AI Psychologist and Journal Entries -->
     <script>
+      // AI Psychologist Submit
+      document.getElementById('advice-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const userInput = document.getElementById('user-input').value;
+
+        try {
+          const response = await fetch('/get-advice', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ message: userInput })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            document.getElementById('advice-output').innerText = data.advice;
+          } else {
+            document.getElementById('advice-output').innerText = 'Error: ' + data.error;
+          }
+        } catch (error) {
+          document.getElementById('advice-output').innerText = 'An error occurred: ' + error.message;
+        }
+      });
+
+      // Journal Entries Analysis
+      document.getElementById('analyze-button').addEventListener('click', async function () {
+        try {
+          const response = await fetch('/journal_entries/analyze', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            document.getElementById('analyze-output').innerText = data.analysis;
+          } else {
+            document.getElementById('analyze-output').innerText = 'Error: ' + data.error;
+          }
+        } catch (error) {
+          document.getElementById('analyze-output').innerText = 'An error occurred: ' + error.message;
+        }
+      });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <%= javascript_include_tag 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js' %>
+  </body>
+</html>
