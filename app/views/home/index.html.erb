@@ -1,259 +1,237 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>MindBuddy - Your Personal Mental Health Tracker</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background-color: #f0f4f8;
-      margin: 0;
-      padding: 0;
-    }
+  <head>
+    <title>MindBuddy - Your Personal Mental Health Tracker</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
 
-    h1 {
-      color: #003366;
-      text-align: center;
-      padding: 20px 0;
-      margin: 0;
-      background-color: #ffffff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      border-bottom: 4px solid #00509e;
-    }
+    <!-- Bootstrap CSS -->
+    <%= stylesheet_link_tag 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 
-    .content {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      color: #00509e;
-      border-bottom: 2px solid #00509e;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-    }
-
-    .user-info {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .journal-entries, .tips, .exercises, .professionals, .upcoming-features ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 20px 0;
-    }
-
-    .journal-entries li, .tips li, .exercises li, .professionals li, .upcoming-features li {
-      background: #eef4fb;
-      margin: 10px 0;
-      padding: 15px;
-      border: 1px solid #c0d6e4;
-      border-radius: 10px;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      text-decoration: none;
-      margin: 5px;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-    }
-
-    .btn-primary {
-      background: #007bbd;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #00509e;
-    }
-
-    .btn-success {
-      background: #28a745;
-      color: white;
-    }
-
-    .btn-success:hover {
-      background: #218838;
-    }
-
-    .upcoming-features {
-      margin-bottom: 40px;
-      padding: 20px;
-      background: #ffffff;
-      border: 1px solid #c0d6e4;
-      border-radius: 15px;
-    }
-
-    .upcoming-features h2 {
-      color: #00509e;
-    }
-
-    .upcoming-features li {
-      margin: 10px 0;
-    }
-
-    .upcoming-features strong {
-      color: #00509e;
-    }
-
-    .psychologist-section {
-      text-align: center;
-      margin-bottom: 40px;
-      padding: 30px;
-      background: #e3f2fd;
-      border: 1px solid #90caf9;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .psychologist-section h2 {
-      color: #00509e;
-      margin-bottom: 20px;
-    }
-
-    .psychologist-section form {
-      margin-top: 20px;
-    }
-
-    .psychologist-section textarea {
-      width: 90%;
-      height: 100px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #c0d6e4;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: #007bbd;
-      color: white;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-  </style>
-</head>
-<body>
-  <h1>Welcome to MindBuddy - Your Personal Mental Health Tracker</h1>
-
-  <div class="content">
-    <div class="psychologist-section">
-      <h2>AI Psychologist</h2>
-      <p>Get real-time support and guidance from our AI psychologist, available 24/7 to offer you advice and coping strategies tailored to your needs.</p>
-      <form id="advice-form">
-        <textarea id="user-input" placeholder="Describe your situation..." required></textarea><br>
-        <button type="submit" class="btn btn-primary">Get Advice</button>
-      </form>
-      <div id="advice-output" style="margin-top: 20px;"></div>
-    </div>
-
-    <div class="upcoming-features">
-      <h2>Upcoming Features</h2>
-      <ul>
-        <li>
-          <strong>AI Analysis of Journal Entries:</strong> Our advanced AI analyzes your journal entries to identify patterns and provide insights into your emotional well-being.
-        </li>
-        <li>
-          <strong>AI Analysis of Facial Expressions and Voice:</strong> MindBuddy uses cutting-edge AI technology to analyze your facial expressions and voice, providing a comprehensive assessment of your mood and mental state.
-        </li>
-      </ul>
-    </div>
-
-    <div class="user-info">
-      <% if user_signed_in? %>
-        <p>Hello, <%= current_user.email %>!</p>
-        <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'btn btn-primary' %> |
-        <%= link_to 'New Journal Entry', new_journal_entry_path, class: 'btn btn-success' %>
-      <% else %>
-        <p><%= link_to 'Sign up', new_user_registration_path, class: 'btn btn-primary' %> or
-        <%= link_to 'Login', new_user_session_path, class: 'btn btn-primary' %></p>
-      <% end %>
-    </div>
-
-    <% if user_signed_in? %>
-      <h2>Your Journal Entries</h2>
-      <ul class="journal-entries">
-        <% if current_user.journal_entries.any? %>
-          <% current_user.journal_entries.each do |entry| %>
-            <li>
-              <strong><%= entry.date %>:</strong>
-              <%= link_to entry.content.truncate(50), journal_entry_path(entry) %>
-            </li>
-          <% end %>
-        <% else %>
-          <li>No journal entries found. <%= link_to 'Create one now', new_journal_entry_path %>.</li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p>Please <%= link_to 'login', new_user_session_path %> to view your journal entries.</p>
-    <% end %>
-
-    <h2>Mental Health Tips</h2>
-    <ul class="tips">
-      <% @tips.each do |tip| %>
-        <li><%= link_to tip.content, tip_path(tip) %></li>
-      <% end %>
-    </ul>
-
-    <h2>Interactive Exercises</h2>
-    <ul class="exercises">
-      <% @exercises.each do |exercise| %>
-        <li><%= link_to exercise.name, exercise_path(exercise) %></li>
-      <% end %>
-    </ul>
-
-    <h2>Connect with Professionals</h2>
-    <ul class="professionals">
-      <% @professionals.each do |professional| %>
-        <li><%= link_to professional.name, professional_path(professional) %></li>
-      <% end %>
-    </ul>
-  </div>
-
-  <footer>
-    Jaroslav Sidor is the owner of the project
-  </footer>
-
-  <script>
-    document.getElementById('advice-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const userInput = document.getElementById('user-input').value;
-
-      try {
-        const response = await fetch('/get-advice', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-          },
-          body: JSON.stringify({ message: userInput })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          document.getElementById('advice-output').innerText = data.advice;
-        } else {
-          document.getElementById('advice-output').innerText = 'Error: ' + data.error;
-        }
-      } catch (error) {
-        document.getElementById('advice-output').innerText = 'An error occurred: ' + error.message;
+    <style>
+      body {
+        background-color: #f7f9fc;
+        font-family: 'Open Sans', sans-serif;
+        padding-top: 80px; /* To prevent content from hiding behind the fixed header */
+        padding-bottom: 60px; /* To prevent content from hiding behind the fixed footer */
       }
-    });
-  </script>
-</body>
-</html>
+
+      h1, h2 {
+        color: #2c3e50;
+        text-align: center;
+      }
+
+      h1 {
+        margin-top: 30px;
+        font-size: 3em;
+      }
+
+      .section-title {
+        color: #2980b9;
+        border-bottom: 2px solid #2980b9;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        font-size: 2em;
+        font-weight: bold;
+      }
+
+      .navbar {
+        background-color: #2980b9;
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5em;
+        color: #fff !important;
+      }
+
+      .navbar-light .navbar-nav .nav-link {
+        color: #fff !important;
+      }
+
+      .content {
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+
+      .list-group-item {
+        border: none;
+        background-color: #ecf0f1;
+        color: #34495e;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        padding: 15px;
+        transition: background-color 0.3s;
+      }
+
+      .list-group-item:hover {
+        background-color: #bdc3c7;
+        cursor: pointer;
+      }
+
+      .btn-primary, .btn-success {
+        background-color: #2980b9;
+        border-color: #2980b9;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+
+      .btn-primary:hover, .btn-success:hover {
+        background-color: #21618c;
+        border-color: #21618c;
+      }
+
+      .btn-danger {
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: bold;
+      }
+
+      footer {
+        background-color: #2980b9;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.2em;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      footer p {
+        margin: 0;
+      }
+
+      .alert-info {
+        font-size: 1.1em;
+        color: #2980b9;
+        background-color: #eaf3fa;
+        border-color: #d6e9f8;
+      }
+
+      .section {
+        margin-bottom: 50px;
+      }
+
+      textarea.form-control {
+        border-radius: 15px;
+        border: 1px solid #ced4da;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="#">MindBuddy</a>
+    </nav>
+
+    <div class="container mt-5">
+      <div class="content">
+        <!-- AI Psychologist Section -->
+        <div class="section psychologist-section">
+          <h2 class="section-title">AI Psychologist</h2>
+          <p>Get real-time support and guidance from our AI psychologist, available 24/7 to offer you advice and coping strategies tailored to your needs.</p>
+          <form id="advice-form" class="mb-4">
+            <textarea id="user-input" placeholder="Describe your situation..." required class="form-control mb-2"></textarea><br>
+            <button type="submit" class="btn btn-primary">Get Advice</button>
+          </form>
+          <div id="advice-output" class="alert alert-info"></div>
+        </div>
+
+        <!-- Journal Entries Section -->
+        <div class="section journal-entries-section">
+          <h2 class="section-title">Your Journal Entries</h2>
+          <% if user_signed_in? %>
+            <div class="user-info mb-3">
+              <p>Hello, <%= current_user.email %>!</p>
+              <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'btn btn-danger' %> |
+              <%= link_to 'New Journal Entry', new_journal_entry_path, class: 'btn btn-success' %>
+            </div>
+
+            <% if current_user.journal_entries.any? %>
+              <ul class="list-group mb-3">
+                <% current_user.journal_entries.each do |entry| %>
+                  <li class="list-group-item">
+                    <strong><%= entry.created_at.strftime('%Y-%m-%d') %>:</strong>
+                    <%= link_to entry.content.truncate(50), journal_entry_path(entry), class: 'ml-2' %> |
+                    <%= link_to 'Edit', edit_journal_entry_path(entry), class: 'btn btn-sm btn-warning' %> |
+                    <%= link_to 'Delete', journal_entry_path(entry), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' %>
+                  </li>
+                <% end %>
+              </ul>
+              <%= button_to 'Analyze Journal Entries', analyze_journal_entries_path, method: :post, class: 'btn btn-primary' %>
+            <% else %>
+              <p>No journal entries found. <%= link_to 'Create one now', new_journal_entry_path, class: 'btn btn-success' %>.</p>
+            <% end %>
+          <% else %>
+            <p>Please <%= link_to 'Sign up', new_user_registration_path, class: 'btn btn-primary' %> or
+            <%= link_to 'Login', new_user_session_path, class: 'btn btn-primary' %> to view and manage your journal entries.</p>
+          <% end %>
+        </div>
+
+        <!-- Mental Health Tips Section -->
+        <div class="section tips-section mt-5">
+          <h2 class="section-title">Mental Health Tips</h2>
+          <ul class="list-group">
+            <% @tips.each do |tip| %>
+              <li class="list-group-item"><%= tip.content %></li>
+            <% end %>
+          </ul>
+        </div>
+
+        <!-- Exercises Section -->
+        <div class="section exercises-section mt-5">
+          <h2 class="section-title">Interactive Exercises</h2>
+          <ul class="list-group">
+            <% @exercises.each do |exercise| %>
+              <li class="list-group-item"><%= exercise.name %></li>
+            <% end %>
+          </ul>
+        </div>
+
+        <!-- Professionals Section -->
+        <div class="section professionals-section mt-5">
+          <h2 class="section-title">Connect with Professionals</h2>
+          <ul class="list-group">
+            <% @professionals.each do |professional| %>
+              <li class="list-group-item"><%= professional.name %></li>
+            <% end %>
+          </ul>
+        </div>
+
+        <!-- Upcoming Features Section -->
+        <div class="section upcoming-features mt-5">
+          <h2 class="section-title">Upcoming Features</h2>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <strong>AI Analysis of Journal Entries:</strong> Our advanced AI analyzes your journal entries to identify patterns and provide insights into your emotional well-being.
+            </li>
+            <li class="list-group-item">
+              <strong>AI Analysis of Facial Expressions and Voice:</strong> MindBuddy uses cutting-edge AI technology to analyze your facial expressions and voice, providing a comprehensive assessment of your mood and mental state.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2024 MindBuddy | Jaroslav Sidor is the owner of the project</p>
+    </footer>
+
+    <!-- JavaScript for AI Psychologist -->
+    <script>

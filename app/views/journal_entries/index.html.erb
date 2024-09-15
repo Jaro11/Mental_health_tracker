@@ -9,3 +9,36 @@
     </li>
   <% end %>
 </ul>
+
+<div class="journal-analysis-section">
+  <h2>Your Journal Entries</h2>
+  <!-- List of journal entries... -->
+
+  <button id="analyze-journal-entries" class="btn btn-primary">Analyze Journal Entries</button>
+
+  <div id="analysis-output" style="margin-top: 20px;"></div>
+</div>
+
+<script>
+  document.getElementById('analyze-journal-entries').addEventListener('click', async function () {
+    try {
+      const response = await fetch('<%= analyze_journal_entries_path %>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        document.getElementById('analysis-output').innerText = data.analysis;
+      } else {
+        document.getElementById('analysis-output').innerText = 'Error: ' + data.error;
+      }
+    } catch (error) {
+      document.getElementById('analysis-output').innerText = 'An error occurred: ' + error.message;
+    }
+  });
+</script>

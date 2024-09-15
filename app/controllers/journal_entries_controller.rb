@@ -41,9 +41,24 @@ class JournalEntriesController < ApplicationController
     redirect_to journal_entries_url, notice: 'Journal entry was successfully destroyed.'
   end
 
+  # New analyze action for journal entries
+  def analyze
+    openai_service = OpenaiService.new  # No arguments passed
+    journal_entries = current_user.journal_entries.order(created_at: :asc)
+
+    begin
+      analysis = openai_service.analyze_journal_entries(journal_entries)
+      render json: { analysis: analysis }
+    rescue StandardError => e
+      Rails.logger.error "An error occurred during analysis: #{e.message}"
+      render json: { error: "An error occurred: #{e.message}" }, status: :internal_server_error
+    end
+  end
+
   private
 
   def journal_entry_params
     params.require(:journal_entry).permit(:content, :date)
   end
+
 end
